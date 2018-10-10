@@ -1,0 +1,118 @@
+# Sergelen Gongor, ...
+#############################################
+# Uebungsblatt 2, Aufgabe 3
+# Hanoi Turm mit neuen Regeln (iterative)
+#############################################
+
+
+count = 0   # zaehlt alle Zwischenschritte
+
+def anzeigen(source,helper,target):     # zeigt den aktuellen Zustand
+    
+    global count 
+    
+    print("Source = ",source)
+    print("Helper = ",helper)
+    print("Target = ",target)
+    print("count = ",count)
+    print("----------------------")
+ 
+ 
+def hanoi(n):
+    
+    global count                        # Zwischenschritte Zaehler    
+   
+    source = list(range(n, 0, -1))      # Initialisierung, source = [n,n-1,...,2,1]
+    helper = []
+    target = []
+    
+    anzeigen(source,helper,target)
+   
+    if n%2==0:      # wenn n eine gerade Zahl ist
+        helper.append(source.pop())     # Scheibe 1 wird erst in den Stab helper geschoben
+        count = count + 1
+        anzeigen(source,helper,target)
+    else:
+        target.append(source.pop())     # Scheibe 1 wird erst in den Stab target geschoben
+        count = count + 1
+        anzeigen(source,helper,target)
+        
+    schiebe(n,source,helper,target)
+        
+    return 
+  
+
+def schiebe(n,source,helper,target):
+    
+    global count
+    
+    while source[0] == n:     # vor dem  Schieben von Scheibe n, am Ende wird Scheibe n geschoben 
+        if len(source) == 1 and len(target) == 0:    # der grosste Scheibe n wird geschoben
+            target.append(source.pop())
+            count = count + 1
+            anzeigen(source,helper,target)
+            break
+        elif len(helper) == 0:
+            helper.append(source.pop())
+            count = count + 1
+            anzeigen(source,helper,target)
+        elif len(target) == 0:
+            target.append(source.pop())
+            count = count + 1
+            anzeigen(source,helper,target)
+        else:       # helper und target sind nicht leer 
+            if helper[-1] > target[-1]:
+                for i in range(len(target)):
+                    helper.append(target.pop())
+                    count = count + 1
+                    anzeigen(source,helper,target)
+            else:
+                for i in range(len(helper)):
+                    target.append(helper.pop())
+                    count = count + 1
+                    anzeigen(source,helper,target)
+        
+    
+    while len(source)!=0 or len(helper)!=0:       # nach dem Schieben vom Scheibe n
+        if len(source)==0:
+            for i in range(len(helper)-1):
+                source.append(helper.pop())
+                count = count + 1
+                anzeigen(source,helper,target)
+            
+            target.append(helper.pop())
+            count = count + 1
+            anzeigen(source,helper,target)
+        
+        else:   # angenommen len(helper)==0
+            for i in range(len(source)-1):
+                helper.append(source.pop())
+                count = count + 1
+                anzeigen(source,helper,target)
+            
+            target.append(source.pop())
+            count = count + 1
+            anzeigen(source,helper,target)
+        
+    return
+
+    
+##############################################################################
+print('Hanoi Turm - mit den neuen Regel') 
+print('Bitte geben Sie eine positive natuerliche Zahl ein: ')
+disk = int (input())                # Eingabe n Scheibe, definiert als 'int' Datentyp
+
+if disk >= 1:
+    hanoi(disk)
+else :
+    print('Ungueltige Eingabe!')
+    
+################################################################################
+'''
+ neue Regel: die groeßte Scheibe an einer Stange muss immer noch ganz unten liegen, aber die 
+ Scheiben darueber koennen in beliebiger Reihenfolge kommen. 
+ als Beispiel Hanoi(5) haben wir nur 21 Schritte gebraucht, dagegen bei den normalen
+Hanoi funktionen brauchen (2**5-1)=31 Schritten. 
+Fuer n Scheiben braucht unsere Funktion (n*(n-1)+1) Schritte.
+Wenn n= 100 ist dann 100*(100-1) + 1 = 100*99 + 1 = 9901 Tage => 27,12 Jahre
+'''
